@@ -21,6 +21,132 @@ paths:
               schema:
                 $ref: '#/components/schemas/Message'
           description: ''
+  /api/members/register/:
+    post:
+      summary: Регистрация нового участника
+      tags:
+      - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+              - username
+              - password
+      responses:
+        '201':
+          description: Участник успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  member:
+                    $ref: '#/components/schemas/Member'
+        '400':
+          description: Ошибка валидации
+  /api/members/login/:
+    post:
+      summary: Авторизация участника
+      tags:
+      - Members
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+              - username
+              - password
+      responses:
+        '200':
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  member:
+                    $ref: '#/components/schemas/Member'
+        '400':
+          description: Неверные учетные данные
+  /api/members/me/:
+    get:
+      summary: Текущий участник
+      tags:
+      - Members
+      security:
+      - TokenAuth: []
+      responses:
+        '200':
+          description: Данные текущего участника
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+        '401':
+          description: Неавторизован
+  /api/chat/messages/:
+    get:
+      summary: Список сообщений группового чата
+      tags:
+      - Chat
+      security:
+      - TokenAuth: []
+      responses:
+        '200':
+          description: Список сообщений
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessage'
+        '401':
+          description: Неавторизован
+    post:
+      summary: Отправка сообщения в групповой чат
+      tags:
+      - Chat
+      security:
+      - TokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+              required:
+              - text
+      responses:
+        '201':
+          description: Сообщение создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+        '401':
+          description: Неавторизован
 components:
   schemas:
     Message:
@@ -36,6 +162,37 @@ components:
       required:
       - message
       - timestamp
+    Member:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - username
+      - created_at
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        author_username:
+          type: string
+        text:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - author_username
+      - text
+      - created_at
   securitySchemes:
     basicAuth:
       type: http
@@ -44,3 +201,7 @@ components:
       type: apiKey
       in: cookie
       name: sessionid
+    TokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Token
