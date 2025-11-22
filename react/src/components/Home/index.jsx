@@ -1,12 +1,18 @@
 import React from 'react';
 
-/**
- * Для ИИ: Это заглушка. Обнови этот компонент. Здесь должен быть начальный экран приложения.
- */
-export const Home = () => {
+const Home = () => {
   return (
-    <div data-easytag="id1-src/components/Home/index.jsx">
-      <div>This is home page</div>
+    <div
+      data-easytag="id1-src/components/Home/index.jsx"
+      className="home-page"
+    >
+      <h1 className="home-title">Групповой чат</h1>
+      <p className="home-subtitle">
+        Основная страница с общим чатом для всех авторизованных пользователей.
+      </p>
+      {/* Здесь позже будет реализован интерфейс чата */}
     </div>
   );
 };
+
+export default Home;
